@@ -209,51 +209,6 @@ class Resnet50_test(Network):
              .proposal_layer(_feat_stride, anchor_scales, 'TEST',name = 'rois'))
 
         #========= RCNN ============        
-      #   (self.feed('res4f_relu','rois')
-      #   	 .roi_pool(7,7,1.0/16,name='res5a_branch2a_roipooling')
-      #        .conv(1, 1, 512, 2, 2, biased=False, relu=False, name='res5a_branch2a', padding='VALID')
-      #        .batch_normalization(relu=True, name='bn5a_branch2a',is_training=False)
-      #        .conv(3, 3, 512, 1, 1, biased=False, relu=False, name='res5a_branch2b')
-      #        .batch_normalization(relu=True, name='bn5a_branch2b',is_training=False)
-      #        .conv(1, 1, 2048, 1, 1, biased=False, relu=False, name='res5a_branch2c')
-      #        .batch_normalization(name='bn5a_branch2c',is_training=False,relu=False))
-
-
-      #   (self.feed('res5a_branch2a_roipooling')
-      #        .conv(1,1,2048,2,2,biased=False, relu=False, name='res5a_branch1', padding='VALID')
-      #        .batch_normalization(name='bn5a_branch1',is_training=False,relu=False))
-
-      #   (self.feed('bn5a_branch2c','bn5a_branch1')
-      #        .add(name='res5a')
-      #        .relu(name='res5a_relu')
-      #        .conv(1, 1, 512, 1, 1, biased=False, relu=False, name='res5b_branch2a')
-      #        .batch_normalization(relu=True, name='bn5b_branch2a',is_training=False)
-      #        .conv(3, 3, 512, 1, 1, biased=False, relu=False, name='res5b_branch2b')
-      #        .batch_normalization(relu=True, name='bn5b_branch2b',is_training=False)
-      #        .conv(1, 1, 2048, 1, 1, biased=False, relu=False, name='res5b_branch2c')
-      #        .batch_normalization(name='bn5b_branch2c',is_training=False,relu=False))
-
-      #   (self.feed('res5a_relu', 
-      #              'bn5b_branch2c')
-      #        .add(name='res5b')
-      #        .relu(name='res5b_relu')
-      #        .conv(1, 1, 512, 1, 1, biased=False, relu=False, name='res5c_branch2a')
-      #        .batch_normalization(relu=True, name='bn5c_branch2a',is_training=False)
-      #        .conv(3, 3, 512, 1, 1, biased=False, relu=False, name='res5c_branch2b')
-      #        .batch_normalization(relu=True, name='bn5c_branch2b',is_training=False)
-      #        .conv(1, 1, 2048, 1, 1, biased=False, relu=False, name='res5c_branch2c')
-      #        .batch_normalization(name='bn5c_branch2c',is_training=False,relu=False))
-
-      #   (self.feed('res5b_relu', 
-      #              'bn5c_branch2c')
-      #        .add(name='res5c')
-      #        .relu(name='res5c_relu')
-      #        .fc(n_classes, relu=False, name='cls_score')
-      #        .softmax(name='cls_prob'))
-
-
-      #   (self.feed('res5c_relu')
-      #        .fc(n_classes*4, relu=False, name='bbox_pred'))
         (self.feed('res4f_relu')
             .conv(1, 1, 2048, 1, 1, biased=False, relu=False, name='res5a_branch1', padding='VALID')
             .batch_normalization(relu=False, name='bn5a_branch1'))

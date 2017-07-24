@@ -60,7 +60,7 @@ class VGGnet_test(Network):
 
         (self.feed('conv5_3')
             .conv(3, 3, 72, 1, 1, biased=True, rate=2, relu=False, name='conv6_1_offset', padding='SAME', initializer='zeros'))
-        (self.feed('conv5_3', 'conv_6_1_offset')
+        (self.feed('conv5_3', 'conv6_1_offset')
             .deform_conv(3, 3, 512, 1, 1, biased=False, rate=2, relu=True, num_deform_group=4, name='conv6_1'))
         (self.feed('conv6_1')
             .conv(3, 3, 72, 1, 1, biased=True, rate=2, relu=False, name='conv6_2_offset', padding='SAME', initializer='zeros'))

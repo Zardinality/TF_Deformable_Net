@@ -2,7 +2,11 @@
 TF_INC=$(python -c 'import tensorflow as tf; print(tf.sysconfig.get_include())')
 echo $TF_INC
 
-CUDA_PATH=/usr/local/cuda/
+CUDA_HOME=/usr/local/cuda/
+
+if [ ! -f $TF_INC/tensorflow/stream_executor/cuda/cuda_config.h ]; then
+    cp ./cuda_config.h $TF_INC/tensorflow/stream_executor/cuda/
+fi
 
 cd roi_pooling_layer
 

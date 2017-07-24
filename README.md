@@ -18,7 +18,7 @@ This is an tensorflow implementation of [Deformable Convolutional Network](https
 
 Python 3 (Insufficient compatibility guaranteed for Python 2, though TFFRCNN is built on python 2, I use [ilovin's refactored version](https://github.com/ilovin/TFFRCNN_Python3) as base, and add some `__future__` imports, so any report on compatibility issues welcomed)
 
-Tensorflow(1.0+)
+Tensorflow(1.0+) (Build from source recommended, or else you might need to check `./lib/cuda_config.h ` to fill in some options.)
 
 matplotlib
 
@@ -50,7 +50,7 @@ Any NVIDIA GPUs with at least 4GB memory should be OK.(Only single gpu mode supp
 
     ```Shell
     cd ./lib
-    make 
+    make
     ```
 
 ### Demo
