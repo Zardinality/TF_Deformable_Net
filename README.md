@@ -149,5 +149,8 @@ After training, you could run scripts in `./experiments/eval`to evaluate on VOC2
 ./experiments/scripts/voc2007_test_vgg.sh
 ```
 
+### FAQ
+1. cudaCheckError() failed : invalid device function. 
+Check ./lib/make.sh and change the -arch flag accordingly. (Credit to [here](https://github.com/smallcorgi/Faster-RCNN_TF/issues/19))
 
 
