@@ -2,6 +2,18 @@
 
 This is an tensorflow implementation of [Deformable Convolutional Network](https://arxiv.org/abs/1703.06211) in Faster R-CNN fashion. This project is largely built on [TFFRCNN](https://github.com/CharlesShang/TFFRCNN), the [original implementation in mxnet](https://github.com/msracver/Deformable-ConvNets) and many other upstream projects. This repository is only on test phase right now, any contributions helping with bugs and compatibility issues are welcomed.
 
+[TOC]
+
+* [TODO](#TODO)
+  * [Requirements: software](#Requirements:-software)
+  * [Requirements: Hardware](#Requirements:-Hardware)
+  * [Installation](#Installation-(sufficient-for-the-demo))
+  * [Demo](#Demo)
+    * [Download list](#Download-list)
+  * [Training](#Training)
+  * [Testing](#Testing)
+  * [FAQ](#FAQ)
+
 ## TODO
 
 - [x] Faster R-CNN
@@ -38,7 +50,7 @@ Cuda 8.0
 
 Any NVIDIA GPUs with at least 4GB memory should be OK.(Only single gpu mode supported, if you encounter any memory issue on a multi-gpu machine, try `export $CUDA_VISIBLE_DEVICE=$(the gpu id you want to use)`).
 
-### Installation (sufficient for the demo)
+## Installation (sufficient for the demo)
 
 1. Clone this repository
     ```Shell
@@ -53,7 +65,7 @@ Any NVIDIA GPUs with at least 4GB memory should be OK.(Only single gpu mode supp
     make
     ```
 
-### Demo
+## Demo
 
 *After successfully completing [basic installation](#installation-sufficient-for-the-demo)*, you'll be ready to run the demo.
 
@@ -74,7 +86,7 @@ The demo performs detection using a ResNet50 network trained for detection on PA
 2. [Resnet50 trained on ImageNet](https://drive.google.com/file/d/0B_xFdh9onPagSWU1ZTAxUTZkZTQ/view?usp=sharing)
 3. [Resnet50 Model(map@0.5 66%)](https://drive.google.com/file/d/0B6rLC-vrlfKFbHk1Si05YVZ0d3c/view?usp=sharing)
 
-### Training
+## Training
 
 1. Download the training, validation, test data and VOCdevkit
 
@@ -138,7 +150,7 @@ The demo performs detection using a ResNet50 network trained for detection on PA
     # generate an image ./experiments/profiling/profile.png
     ```
 
-### Testing
+## Testing
 
 After training, you could run scripts in `./experiments/eval`to evaluate on VOC2007. Or by running `./faster_rcnn/test_net.py` directly.
 
@@ -149,9 +161,10 @@ After training, you could run scripts in `./experiments/eval`to evaluate on VOC2
 ./experiments/scripts/voc2007_test_vgg.sh
 ```
 
-### FAQ
+## FAQ
+
 1. cudaCheckError() failed : invalid device function. 
-Check ./lib/make.sh and change the -arch flag accordingly. (Credit to [here](https://github.com/smallcorgi/Faster-RCNN_TF/issues/19))
+   Check ./lib/make.sh and change the -arch flag accordingly. (Credit to [here](https://github.com/smallcorgi/Faster-RCNN_TF/issues/19))
 
 2. undefined symbol: _ZN10tensorflow8internal21CheckOpMessageBuilder9NewStringB5cxx11Ev
-If you use gcc5 to build, modify `make.sh` to gcc5 version(simply adding a `-D_GLIBCXX_USE_CXX11_ABI=0` flag as pointed out in [this issue](https://github.com/tensorflow/tensorflow/issues/1569)).
+   If you use gcc5 to build, modify `make.sh` to gcc5 version(simply adding a `-D_GLIBCXX_USE_CXX11_ABI=0` flag as pointed out in [this issue](https://github.com/tensorflow/tensorflow/issues/1569)).
