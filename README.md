@@ -162,7 +162,9 @@ After training, you could run scripts in `./experiments/eval`to evaluate on VOC2
 ## FAQ
 
 1. cudaCheckError() failed : invalid device function. 
+
    Check ./lib/make.sh and change the -arch flag accordingly. (Credit to [here](https://github.com/smallcorgi/Faster-RCNN_TF/issues/19))
 
 2. undefined symbol: _ZN10tensorflow8internal21CheckOpMessageBuilder9NewStringB5cxx11Ev
+
    If you use gcc5 to build, modify `make.sh` to gcc5 version(simply adding a `-D_GLIBCXX_USE_CXX11_ABI=0` flag as pointed out in [this issue](https://github.com/tensorflow/tensorflow/issues/1569)).
