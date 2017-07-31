@@ -2,18 +2,16 @@
 
 This is an tensorflow implementation of [Deformable Convolutional Network](https://arxiv.org/abs/1703.06211) in Faster R-CNN fashion. This project is largely built on [TFFRCNN](https://github.com/CharlesShang/TFFRCNN), the [original implementation in mxnet](https://github.com/msracver/Deformable-ConvNets) and many other upstream projects. This repository is only on test phase right now, any contributions helping with bugs and compatibility issues are welcomed.
 
-[TOC]
-
-* [TODO](#TODO)
-  * [Requirements: software](#Requirements:-software)
-  * [Requirements: Hardware](#Requirements:-Hardware)
-  * [Installation](#Installation-(sufficient-for-the-demo))
-  * [Demo](#Demo)
-    * [Download list](#Download-list)
-  * [Training](#Training)
-  * [Testing](#Testing)
-  * [FAQ](#FAQ)
-
+* [TF_Deformable_Net](#tf_deformable_net)
+* [TODO](#todo)
+* [Requirements: software](#requirements-software)
+* [Requirements: Hardware](#requirements-hardware)
+* [Installation (sufficient for the demo)](#installation-sufficient-for-the-demo)
+* [Demo](#demo)
+   * [Download list](#download-list)
+* [Training](#training)
+* [Testing](#testing)
+* [FAQ](#faq)
 ## TODO
 
 - [x] Faster R-CNN
