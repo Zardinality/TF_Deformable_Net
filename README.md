@@ -40,7 +40,7 @@ scikit-image
 
 cython
 
-g++ 4.9(For gcc5 users, you should check make.sh and modify it as told.)
+g++ 4.9(For gcc5 users, you should check make.sh and modify it as told. But there are still chances you might failed with some `undefined symbol` message, I haven't figured it out totally. But generally g++ 4.9 should be the safest.)
 
 Cuda 8.0
 
@@ -167,4 +167,12 @@ After training, you could run scripts in `./experiments/eval`to evaluate on VOC2
 
 2. undefined symbol: _ZN10tensorflow8internal21CheckOpMessageBuilder9NewStringB5cxx11Ev
 
-   If you use gcc5 to build, modify `make.sh` to gcc5 version(simply adding a `-D_GLIBCXX_USE_CXX11_ABI=0` flag as pointed out in [this issue](https://github.com/tensorflow/tensorflow/issues/1569)).
+   If you use gcc5 to build, modify `make.sh` to gcc5 version(simply adding a `-D_GLIBCXX_USE_CXX11_ABI=0` flag as pointed out in [this issue](https://github.com/tensorflow/tensorflow/issues/1569)). If it doesn't work, try reinstall gcc4.9 as following:
+
+   - installing gcc-4.9 and g++-4.9
+   - changing all nvcc related command in `make.sh` to this form:
+     nvcc -std=c++11 **-ccbin=/usr/bin/g++-4.9** -c -o deform_conv.cu.o deform_conv.cu.cc -I $TF_INC -D GOOGLE_CUDA=1 -x cu -Xcompiler -fPIC -L /usr/local/cuda-8.0/lib64/ --expt-relaxed-constexpr
+   - and changing all g++ related command in `make.sh` to this form:
+     **g++-4.9** -std=c++11 -shared -o deform_conv.so deform_conv.cc deform_conv.cu.o -I $TF_INC -fPIC -lcudart -L $CUDA_HOME/lib64 -D GOOGLE_CUDA=1 -Wfatal-errors -I $CUDA_HOME/include -D_GLIBCXX_USE_CXX11_ABI=0
+
+credit to [@cotrane](https://github.com/cotrane) in [this issue](https://github.com/Zardinality/TF-deformable-conv/issues/1)
