@@ -11,7 +11,7 @@
 *.bak
 .DS_Store
 experiments/logs/*
-experiments/eval/*
+# experiments/eval/*
 data/cache/*
 data/pretrain_model
 data/VOC*
