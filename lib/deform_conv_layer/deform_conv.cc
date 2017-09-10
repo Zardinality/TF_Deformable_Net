@@ -751,9 +751,9 @@ class DeformConvBackpropOp : public OpKernel {
                                 in_backprop_ptr + n*input_dim_);
 
         // gradient w.r.t. weight, dWeight should accumulate across the batch and group
-        functor::im2col<Device, T>()(d, input_ptr + n*input_dim_, ToVector(input_shape),
+        functor::deformable_im2col<Device, T>()(d, input_ptr + n*input_dim_, offset_ptr + n*input_offset_dim_, ToVector(input_shape),
                         ToVector(col_buffer_shape), param_->kernel, param_->pad, param_->stride, param_->rates,
-                        col_buffer_ptr);
+                        deformable_group, col_buffer_ptr);
         if (0 == n) {
             functor::LaunchBatchMatMul<T>::Launch(context, out_grad_3d_shape, col_buffer_3d_shape, out_grad_4d_ptr+n*out_grad_3d_dim, 
                                                   col_buffer_ptr, false, true, filter_backprop_ptr);
