@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 TF_INC=$(python -c 'import tensorflow as tf; print(tf.sysconfig.get_include())')
+TF_LIB=$(python -c 'import tensorflow as tf; print(tf.sysconfig.get_lib())')
+NSYNC_INC=$TF_INC"/external/nsync/public"
+# please modify $ARCH according to the following list and your gpu model.
+ARCH=sm_37
 echo $TF_INC
 
 
@@ -29,22 +33,22 @@ fi
 cd roi_pooling_layer
 
 nvcc -std=c++11 -c -o roi_pooling_op.cu.o roi_pooling_op_gpu.cu.cc \
-	-I $TF_INC -D GOOGLE_CUDA=1 -x cu -Xcompiler -fPIC -D GOOGLE_CUDA -arch=sm_37
+	-I $TF_INC -I $NSYNC_INC -D GOOGLE_CUDA=1 -L $CUDA_HOME/lib64 -x cu -Xcompiler -fPIC -D GOOGLE_CUDA -arch=$ARCH
 
 ## if you install tf using already-built binary, or gcc version 4.x, uncomment the two lines below
 g++ -std=c++11 -shared -o roi_pooling.so roi_pooling_op.cc \
-	roi_pooling_op.cu.o -I $TF_INC -fPIC -D GOOGLE_CUDA -lcudart -L $CUDA_HOME/lib64
+	roi_pooling_op.cu.o -I $TF_INC -I $NSYNC_INC -fPIC -D GOOGLE_CUDA -lcudart -L $CUDA_HOME/lib64 -L $TF_LIB -ltensorflow_framework -D_GLIBCXX_USE_CXX11_ABI=0 
 
 # for gcc5-built tf
 # g++ -std=c++11 -shared -o roi_pooling.so roi_pooling_op.cc \
-# 	roi_pooling_op.cu.o -I $TF_INC -fPIC -D GOOGLE_CUDA -lcudart -L $CUDA_HOME/lib64 -D_GLIBCXX_USE_CXX11_ABI=0
+# 	roi_pooling_op.cu.o -I $TF_INC -I $NSYNC_INC -fPIC -D GOOGLE_CUDA -lcudart -L $CUDA_HOME/lib64 -L $TF_LIB -ltensorflow_framework  -D_GLIBCXX_USE_CXX11_ABI=0
 cd ..
 
 
 # add building psroi_pooling layer
 cd psroi_pooling_layer
 nvcc -std=c++11 -c -o psroi_pooling_op.cu.o psroi_pooling_op_gpu.cu.cc \
-	-I $TF_INC -D GOOGLE_CUDA=1 -x cu -Xcompiler -fPIC -D GOOGLE_CUDA -arch=sm_37
+	-I $TF_INC -D GOOGLE_CUDA=1 -x cu -Xcompiler -fPIC -D GOOGLE_CUDA -arch=$ARCH
 
 
 ## if you install tf using already-built binary, or gcc version 4.x, uncomment the two lines below
@@ -58,7 +62,7 @@ cd ..
 
 cd deform_psroi_pooling_layer
 nvcc -std=c++11 -c -o deform_psroi_pooling_op.cu.o deform_psroi_pooling_op_gpu.cu.cc \
-	-I $TF_INC -D GOOGLE_CUDA=1 -x cu -Xcompiler -fPIC -D GOOGLE_CUDA -arch=sm_37
+	-I $TF_INC -D GOOGLE_CUDA=1 -x cu -Xcompiler -fPIC -D GOOGLE_CUDA -arch=$ARCH
 
 ## if you install tf using already-built binary, or gcc version 4.x, uncomment the three lines below
 g++ -std=c++11 -shared -o deform_psroi_pooling.so deform_psroi_pooling_op.cc deform_psroi_pooling_op.cu.o -I \
@@ -70,14 +74,14 @@ g++ -std=c++11 -shared -o deform_psroi_pooling.so deform_psroi_pooling_op.cc def
 cd ..
 
 cd deform_conv_layer
-nvcc -std=c++11 -c -o deform_conv.cu.o deform_conv.cu.cc -I $TF_INC -D\
-          GOOGLE_CUDA=1 -x cu -Xcompiler -fPIC -L /usr/local/cuda-8.0/lib64/ --expt-relaxed-constexpr -arch=sm_37
+nvcc -std=c++11 -ccbin=/usr/bin/g++-4.9 -c -o deform_conv.cu.o deform_conv.cu.cc -I $TF_INC -I $NSYNC_INC -D\
+          GOOGLE_CUDA=1 -x cu -Xcompiler -fPIC -L /usr/local/cuda-8.0/lib64/ --expt-relaxed-constexpr -arch=$ARCH
 ## if you install tf using already-built binary, or gcc version 4.x, uncomment the three lines below
 g++ -std=c++11 -shared -o deform_conv.so deform_conv.cc deform_conv.cu.o -I\
-      $TF_INC -fPIC -lcudart -L $CUDA_HOME/lib64 -D GOOGLE_CUDA=1 -Wfatal-errors -I\
-      $CUDA_HOME/include
+      $TF_INC -I $NSYNC_INC -fPIC -lcudart -L $CUDA_HOME/lib64 -D GOOGLE_CUDA=1 -Wfatal-errors \
+      -L $TF_LIB -ltensorflow_framework -D_GLIBCXX_USE_CXX11_ABI=0 
 # for gcc5-built tf
 # g++ -std=c++11 -shared -o deform_conv.so deform_conv.cc deform_conv.cu.o \
-#   -I $TF_INC -fPIC -D GOOGLE_CUDA -lcudart -L $CUDA_HOME/lib64 -D_GLIBCXX_USE_CXX11_ABI=0
+#   -I $TF_INC -I $NSYNC_INC -fPIC -D GOOGLE_CUDA -lcudart -L $CUDA_HOME/lib64 -L $TF_LIB -ltensorflow_framework -D_GLIBCXX_USE_CXX11_ABI=0
 
 cd ..

@@ -1,17 +1,18 @@
 # TF_Deformable_Net
 
-This is an tensorflow implementation of [Deformable Convolutional Network](https://arxiv.org/abs/1703.06211) in Faster R-CNN fashion. This project is largely built on [TFFRCNN](https://github.com/CharlesShang/TFFRCNN), the [original implementation in mxnet](https://github.com/msracver/Deformable-ConvNets) and many other upstream projects. This repository is only on test phase right now, any contributions helping with bugs and compatibility issues are welcomed.
+This is a tensorflow implementation of [Deformable Convolutional Network](https://arxiv.org/abs/1703.06211) in Faster R-CNN fashion. This project is largely built on [TFFRCNN](https://github.com/CharlesShang/TFFRCNN), the [original implementation in mxnet](https://github.com/msracver/Deformable-ConvNets) and many other upstream projects. This repository is only in test phase right now, any contributions helping with bugs and compatibility issues are welcomed.
 
-* [TF_Deformable_Net](#tf_deformable_net)
-* [TODO](#todo)
-* [Requirements: software](#requirements-software)
-* [Requirements: Hardware](#requirements-hardware)
-* [Installation (sufficient for the demo)](#installation-sufficient-for-the-demo)
-* [Demo](#demo)
-   * [Download list](#download-list)
-* [Training](#training)
-* [Testing](#testing)
-* [FAQ](#faq)
+- [TF_Deformable_Net](#tf_deformable_net)
+- [TODO](#todo)
+- [Requirements: software](#requirements-software)
+- [Requirements: Hardware](#requirements-hardware)
+- [Installation (sufficient for the demo)](#installation-sufficient-for-the-demo)
+- [Demo](#demo)
+  - [Download list](#download-list)
+- [Training](#training)
+- [Testing](#testing)
+- [FAQ](#faq)
+
 ## TODO
 
 - [x] Faster R-CNN
@@ -22,13 +23,12 @@ This is an tensorflow implementation of [Deformable Convolutional Network](https
 
 - [ ] R-FCN
 
-     ​
 
 ## Requirements: software
 
-Python 3 (Insufficient compatibility guaranteed for Python 2, though TFFRCNN is built on python 2, I use [ilovin's refactored version](https://github.com/ilovin/TFFRCNN_Python3) as base, and add some `__future__` imports, so any report on compatibility issues welcomed)
+Python 3 (Insufficient compatibility guaranteed for Python 2, though TFFRCNN is built on python 2, I use [ilovin's refactored version](https://github.com/ilovin/TFFRCNN_Python3) as base and add some `__future__` imports, so any report on compatibility issues welcomed)
 
-Tensorflow(1.0+) (Build from source recommended, or else you might need to check `./lib/cuda_config.h ` to fill in some options.)
+Tensorflow==1.4 (Build from source recommended, or else you might need to check `./lib/cuda_config.h ` to fill in some options.)
 
 matplotlib
 
@@ -40,9 +40,13 @@ scikit-image
 
 cython
 
-g++ 4.9(For gcc5 users, you should check make.sh and modify it as told. But there are still chances you might failed with some `undefined symbol` message, I haven't figured it out totally. But generally g++ 4.9 should be the safest.)
+g++ 4.9(For gcc5 users, you should check make.sh and modify it as told. But there are still chances you might failed with some `undefined symbol` message, I haven't figured it out totally. Therefore g++ 4.9 should be the safest.)
 
 Cuda 8.0
+
+Cudnn 6.0
+
+For cuda and cudnn of a different version, please modify `./lib/cuda_config.h ` accordingly, but I don't give the guarantee it will work.
 
 ## Requirements: Hardware
 
@@ -51,32 +55,44 @@ Any NVIDIA GPUs with at least 4GB memory should be OK.(Only single gpu mode supp
 ## Installation (sufficient for the demo)
 
 1. Clone this repository
-    ```Shell
-    git clone https://github.com/Zardinality/TF_Deformable_Net.git
-    cd TF_Deformable_Net
-    ```
 
-2. setup all the Cython module and gpu kernels (you might want to set -arch depending on the device you run on, note that `row_pooling` and `psroi_pooling` are not neccesserily needed in every sense, because `deformable_psroi_pooling` can work as them in many ways, also, tensorflow already has `tf.image.crop_and_resize` as a faster version for `row_pooling`).
+   ```shell
+   git clone https://github.com/Zardinality/TF_Deformable_Net.git
+   cd TF_Deformable_Net
+   ```
 
-    ```Shell
-    cd ./lib
-    make
-    ```
+2. Before setup all the Cython module and GPU kernels, you might want to set some parameter specific to your GPU model by hand. For example, if you install Tensorflow in binary way, the CUDA_CAPABILITIES of your GPU model should be filled in in the following file:
+
+   - `./lib/cuda_config.h`
+   - `./lib/make.sh`
+
+   Cuda and Cudnn version, plus the path to Cuda toolkit should also be filled in `./lib/cuda_config.h`.
+
+   Note that the build of  `roi_pooling` and `psroi_pooling` in `make.sh` are not necessarily needed, because `deformable_psroi_pooling` can work as them in many ways, also, tensorflow already has `tf.image.crop_and_resize` as a faster version for `roi_pooling`).
+
+3. setup all the Cython module and GPU kernels. 
+
+   ```shell
+   cd ./lib
+   make
+   ```
 
 ## Demo
 
 *After successfully completing [basic installation](#installation-sufficient-for-the-demo)*, you'll be ready to run the demo.
 
 To run the demo
-```Shell
+
+```shell
 cd $TF_Deformable_Net
 python ./faster_rcnn/demo.py --model model_path
 # e.g. python faster_rcnn/demo.py --model ~/tf_deformable_net/restore_output/Resnet50_iter_145000.ckpt
 ```
-Also, for many people work on remote machine, an ipython notebook version demo and test are provided in case visually debug is needed. Except for that all arguments are made in a easydict object, the ipython notebook version demo and test are the same as the script version ones.
+
+Also, for many people work on a remote machine, an ipython notebook version demo and test are provided in case visually debug is needed. Except for that all arguments are made in an easydict object, the ipython notebook version demo and test are the same as the script version ones.
 
 The demo performs detection using a ResNet50 network trained for detection on PASCAL VOC 2007.
-, where model can be download below. Note that since TF 0.12 the checkpoint must contains more than one file, so you need to unzip the downloaded model to a folder whose path is model_path. Also, when you restore, be sure to set the checkpoint name to be the name you save them(no matter what suffix the checkpoint files now have).
+, where the model can be download below. Note that since TF 0.12 the checkpoint must contain more than one file, so you need to unzip the downloaded model to a folder whose path is model_path. Also, when you restore, be sure to set the checkpoint name to be the name you save them(no matter what suffix the checkpoint files now have).
 
 ### Download list
 
@@ -88,65 +104,66 @@ The demo performs detection using a ResNet50 network trained for detection on PA
 
 1. Download the training, validation, test data and VOCdevkit
 
-    ```Shell
-    wget http://host.robots.ox.ac.uk/pascal/VOC/voc2007/VOCtrainval_06-Nov-2007.tar
-    wget http://host.robots.ox.ac.uk/pascal/VOC/voc2007/VOCtest_06-Nov-2007.tar
-    wget http://host.robots.ox.ac.uk/pascal/VOC/voc2007/VOCdevkit_08-Jun-2007.tar
-    ```
+   ```shell
+   wget http://host.robots.ox.ac.uk/pascal/VOC/voc2007/VOCtrainval_06-Nov-2007.tar
+   wget http://host.robots.ox.ac.uk/pascal/VOC/voc2007/VOCtest_06-Nov-2007.tar
+   wget http://host.robots.ox.ac.uk/pascal/VOC/voc2007/VOCdevkit_08-Jun-2007.tar
+   ```
 
 2. Extract all of these tars into one directory named `VOCdevkit`
 
-    ```Shell
-    tar xvf VOCtrainval_06-Nov-2007.tar
-    tar xvf VOCtest_06-Nov-2007.tar
-    tar xvf VOCdevkit_08-Jun-2007.tar
-    ```
+   ```shell
+   tar xvf VOCtrainval_06-Nov-2007.tar
+   tar xvf VOCtest_06-Nov-2007.tar
+   tar xvf VOCdevkit_08-Jun-2007.tar
+   ```
 
 3. It should have this basic structure
 
-    ```Shell
-    $VOCdevkit/                           # development kit
-    $VOCdevkit/VOCcode/                   # VOC utility code
-    $VOCdevkit/VOC2007                    # image sets, annotations, etc.
-    # ... and several other directories ...
-    ```
+   ```shell
+   $VOCdevkit/                           # development kit
+   $VOCdevkit/VOCcode/                   # VOC utility code
+   $VOCdevkit/VOC2007                    # image sets, annotations, etc.
+   # ... and several other directories ...
+   ```
 
 4. Create symlinks for the PASCAL VOC dataset
 
-    ```Shell
-    cd $TF_Deformable_Net/data
-    ln -s $VOCdevkit VOCdevkit2007
-    ```
+   ```shell
+   cd $TF_Deformable_Net/data
+   ln -s $VOCdevkit VOCdevkit2007
+   ```
 
 5. Download pre-trained model [VGG16](https://drive.google.com/open?id=0ByuDEGFYmWsbNVF5eExySUtMZmM) or [Resnet50](https://drive.google.com/file/d/0B_xFdh9onPagSWU1ZTAxUTZkZTQ/view?usp=sharing) and put it in the path `./data/pretrain_model`
 
 6. Run training scripts 
 
-    ```Shell
-    cd $TF_Deformable_Net
-    # for resnet-50
-    python ./faster_rcnn/train_net.py --gpu 0 --weights ./data/pretrain_model/Resnet50.npy --imdb voc_2007_trainval --iters 70000 --cfg  ./experiments/cfgs/faster_rcnn_end2end_resnet.yml --network Resnet50_train --set EXP_DIR exp_dir
-    # for vggnet
-    python ./faster_rcnn/train_net.py --gpu 0 --weights ./data/pretrain_model/VGG_imagenet.npy --imdb voc_2007_trainval --iters 70000 --cfg  ./experiments/cfgs/faster_rcnn_end2end.yml --network VGGnet_train --set EXP_DIR exp_dir
-    ```
-    Or equivalently, edit scripts in `./experiments/scripts`, and start training by running shell scripts. For example:
+   ```shell
+   cd $TF_Deformable_Net
+   # for resnet-50
+   python ./faster_rcnn/train_net.py --gpu 0 --weights ./data/pretrain_model/Resnet50.npy --imdb voc_2007_trainval --iters 70000 --cfg  ./experiments/cfgs/faster_rcnn_end2end_resnet.yml --network Resnet50_train --set EXP_DIR exp_dir
+   # for vggnet
+   python ./faster_rcnn/train_net.py --gpu 0 --weights ./data/pretrain_model/VGG_imagenet.npy --imdb voc_2007_trainval --iters 70000 --cfg  ./experiments/cfgs/faster_rcnn_end2end.yml --network VGGnet_train --set EXP_DIR exp_dir
+   ```
 
-    ```shell
-    # for resnet-50
-    ./experiments/scripts/faster_rcnn_voc_resnet.sh
-    # for vggnet
-    ./experiments/scripts/faster_rcnn_vggnet.sh
-    ```
+   Or equivalently, edit scripts in `./experiments/scripts`, and start training by running shell scripts. For example:
+
+   ```shell
+   # for resnet-50
+   ./experiments/scripts/faster_rcnn_voc_resnet.sh
+   # for vggnet
+   ./experiments/scripts/faster_rcnn_vggnet.sh
+   ```
 
 7. Run a profiling
 
-    ```Shell
-    cd $TF_Deformable_Net
-    # install a visualization tool
-    sudo apt-get install graphviz  
-    ./experiments/profiling/run_profiling.sh 
-    # generate an image ./experiments/profiling/profile.png
-    ```
+   ```shell
+   cd $TF_Deformable_Net
+   # install a visualization tool
+   sudo apt-get install graphviz  
+   ./experiments/profiling/run_profiling.sh 
+   # generate an image ./experiments/profiling/profile.png
+   ```
 
 ## Testing
 
